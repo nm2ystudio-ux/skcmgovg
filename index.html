@@ -484,7 +484,12 @@ const SUBJECT_KEYS=['BM','BI','MAT','SAINS','SEJ','AGAMA','RBT','PJK','PSV','MUZ
 function canonKey(h){ if(!h) return null; const k=String(h).trim().toLowerCase(); return mapKey[k]||null; }
 function parseCSV(txt){
   txt=String(txt||'').replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n'); const first=(txt.split('\n')[0]||'');
-  const cnt={c:(first.match(/,/g)||[]).length;s:(first.match(/;/g)||[]).length;t:(first.match(/\t/g)||[]).length};
+  const cnt = {
+  c: (first.match(/,/g) || []).length,
+  s: (first.match(/;/g) || []).length,
+  t: (first.match(/\t/g) || []).length
+};
+
   let d=','; if(cnt.s>cnt.c&&cnt.s>=cnt.t) d=';'; else if(cnt.t>cnt.c&&cnt.t>=cnt.s) d='\t';
   const rows=[]; let row=[],cur='',q=false; for(let i=0;i<txt.length;i++){const c=txt[i],n=txt[i+1];
     if(q){ if(c=='"'&&n=='"'){cur+='"'; i++;} else if(c=='"'){q=false;} else cur+=c; }
@@ -818,6 +823,20 @@ function renderPenjaga(){
   fillKV('penjaga-yuran', [['Yuran PIBG', r.YURAN_PIBG||'-'],['Status PIBG', r.STATUS_PIBG||'-'],['Yuran Buku', r.YURAN_BUKU||'-'],['Status Buku', r.STATUS_BUKU||'-']]);
 }
 document.getElementById('penjagaCetak').onclick=()=> printDiv('penjagaPrint','Ringkasan Murid');
+
+
+function printDiv(id, title){
+  const html = document.getElementById(id).outerHTML;
+  const css = 'body{font:14px system-ui;margin:20px} h2{margin:0 0 8px} .kv td{border:1px solid #ccc;padding:6px 8px}';
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>${title||'Cetak'}</title><style>${css}</style></head><body><h2>${title||'Cetak'}</h2>${html}</body></html>`);
+  w.document.close(); w.print();
+}
+// ganti baris asal "document.getElementById('hemCari').oninput=renderHEM;"
+const hemInput = document.getElementById('hemCari');
+if (hemInput) hemInput.oninput = renderHEM;
+
+
 
 /* MURID tab */
 function renderMurid(){
